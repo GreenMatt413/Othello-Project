@@ -13,5 +13,8 @@ public class OthelloClient {
         Socket s = new Socket("localhost", 9999);
         BufferedWriter write = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
         BufferedReader read = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        char[][] board = new char[8][8];
+
+
     }
 }
