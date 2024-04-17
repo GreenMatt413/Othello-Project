@@ -1,20 +1,41 @@
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 
 public class OthelloServer {
-    public static void main(String[] args) throws IOException {
-        ServerSocket se = new ServerSocket(9999);
-        System.out.println("Waiting for client connection...");
-        while(true) {
-            Socket s = se.accept();
-            try {
-                System.out.println("Connected to client." + s);
-                BufferedWriter out = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-                BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            } catch (IOException e){
-               e.printStackTrace();
+        public static void main(String[] args) throws IOException {
+            ServerSocket se = new ServerSocket(2048);
+            while (true) {
+                try {
+                    Socket so = se.accept();
+
+                    System.out.println("Connected to client!" + so);
+
+                    BufferedReader br = new BufferedReader(new InputStreamReader(so.getInputStream()));
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(so.getOutputStream()));
+
+                    Thread t = new ControlClient(so, br, bw);
+
+                    t.start();
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
             }
         }
+}
+class ControlClient extends Thread {
+    final BufferedReader br;
+    final BufferedWriter bw;
+    final Socket so;
+
+    public ControlClient(Socket s, BufferedReader br, BufferedWriter bw){
+        this.so = s;
+        this.br = br;
+        this.bw = bw;
     }
+
+    public void run(){
+
+    }
+
 }
