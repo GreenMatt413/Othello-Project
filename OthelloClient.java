@@ -10,10 +10,17 @@ public class OthelloClient {
         }
     }
     public static void main(String[] args) throws IOException {
-        Socket s = new Socket("localhost", 9999);
-        BufferedWriter write = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-        BufferedReader read = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        char[][] board = new char[8][8];
+        Socket soc = new Socket("localhost", 2048);
+        BufferedWriter write = new BufferedWriter(new OutputStreamWriter(soc.getOutputStream()));
+        BufferedReader read = new BufferedReader(new InputStreamReader(soc.getInputStream()));
+
+        Scanner input = new Scanner(System.in);
+
+        System.out.println(read.readLine());
+
+        write.close();
+        read.close();
+        soc.close();
 
 
     }
