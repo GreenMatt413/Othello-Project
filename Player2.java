@@ -43,7 +43,7 @@ import java.util.Scanner;
             byte two = Board.colorToByte(color);
 
             this.os.write(two);
-
+            // Carriage return and newline
             n = "\r\n";
             b1 = n.getBytes();
             this.os.write(b1);
@@ -55,6 +55,7 @@ import java.util.Scanner;
             Scanner input = new Scanner(this.is).useDelimiter("\r\n");
             String serverMove = input.next();
             char c0 = serverMove.charAt(0);
+            // When the server has an X move, a new move is triggered.
             if (c0 == 'X')
                 return new OthelloServer.Move();
             else {
@@ -74,7 +75,7 @@ import java.util.Scanner;
             return first + String.valueOf(second);
         }
 
-        // Play a move.
+        // Play a move. (synchronized is due to asynchronous server and clients.
         public synchronized OthelloServer.Move play(Board board, int color) {
             // Print colors on board
             board.print(color);

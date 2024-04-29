@@ -100,14 +100,17 @@ public class Player implements Runnable {
          new Runnable() {
              public void run() {
                  try {
+                     // Changes from black to white
                      board.move(mv, Board.WHITE);
                      if (board.endOfGame()) {
                          try {
+                             // Closes socket
                              soc.close();
                          } catch (IOException e) {
                              e.printStackTrace();
                          }
                      }
+                     // Prints if wrong move
                  } catch (Board.IllegalMoveException e0) {
                      e0.printStackTrace();
                  }

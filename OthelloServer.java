@@ -1,5 +1,4 @@
 import java.io.*;
-import java.net.*;
 
 public class OthelloServer {
     // Move logistics
@@ -8,19 +7,19 @@ public class OthelloServer {
 
         protected int j;
         protected boolean is_passed;
-
+        // Get row index
         public int getRowIndex() {
             return i;
         }
-
+        // Get column index
         public int getColumnIndex() {
             return j;
         }
-
+        // If move has already been done
         public boolean isPassed() {
             return is_passed;
         }
-
+        // Initialize row and column parameters.
         public Move(int i, int j) {
             this.i = i;
             this.j = j;
@@ -33,16 +32,16 @@ public class OthelloServer {
         this.is_passed = true;
         }
 
-        // Byte is written as output character in move
-        public void writeTo(OutputStream os) throws IOException {
-            if (this.isPassed()) {
-                os.write(0x58);
-                os.write(0x58);
-            } else {
-                os.write((byte) (0x41 + (this.j - 1)));
-                os.write((byte) (0x31 + (this.i - 1)));
-            }
-        }
+        // Byte is written as output character in move (idk if I need this)
+//        public void writeTo(OutputStream os) throws IOException {
+//            if (this.isPassed()) {
+//                os.write(0x58);
+//                os.write(0x58);
+//            } else {
+//                os.write((byte) (0x41 + (this.j - 1)));
+//                os.write((byte) (0x31 + (this.i - 1)));
+//            }
+//        }
 
         public Move(InputStream is) throws IOException {
             byte[] buf = new byte[2];
@@ -61,6 +60,7 @@ public class OthelloServer {
             if (buf[0] == 0x58 && buf[1] == 0x58) {
                 this.i = this.j = 4;
                 this.is_passed = true;
+                // Outside squares from the center. (hex values for position)
             } else if (buf[0] >= 0x41 && buf[0] <= 0x48 &&
                     buf[1] >= 0x31 && buf[1] <= 0x38) {
                 this.i = buf[1] - 0x31 + 1;
@@ -70,7 +70,7 @@ public class OthelloServer {
                 throw new IOException("Invalid move format.");
             }
         }
-        // String form of column and row, like on chess board.
+        // String form of column and row, like on chess board. (A1, H4, etc)
         @Override
         public String toString() {
             if ( this.isPassed() ) {
@@ -85,42 +85,62 @@ public class OthelloServer {
         }
 
         }
+        // Only starting server from one port in this case.
+        private static void startServer(int port) {
+        ServerPlayer s = null;
+        try {
+            s = new ServerPlayer(port);
+            s.testConnection();
+            s.close();
+        } catch (Exception e) {
+            System.out.println("Starting server failed.");
+        }
+        try {
+            if (s != null) {
+                s.close();
+            }
+        } catch (Exception ignored) {
+
+        }
+        }
 
         public static void main(String[] args) throws IOException {
-            ServerSocket se = new ServerSocket(9999);
-            while (true) {
-                try {
-                    Socket so = se.accept();
-
-                    System.out.println("Connected to client!" + so);
-
-                    BufferedReader br = new BufferedReader(new InputStreamReader(so.getInputStream()));
-                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(so.getOutputStream()));
-
-                    Thread t = new ControlClient(so, br, bw);
-
-                    t.start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            startServer(12345);
+            System.out.println("Game finished.");
+            // This was the code we thought of using initially for server
+            // client interaction.
+//            while (true) {
+//                try {
+//                    Socket so = se.accept();
+//
+//                    System.out.println("Connected to client!" + so);
+//
+//                    BufferedReader br = new BufferedReader(new InputStreamReader(so.getInputStream()));
+//                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(so.getOutputStream()));
+//
+//                    Thread t = new ControlClient(so, br, bw);
+//
+//                    t.start();
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
 
             }
         }
-    }
 
-    class ControlClient extends Thread {
-        final BufferedReader br;
-        final BufferedWriter bw;
-        final Socket so;
-
-        public ControlClient(Socket s, BufferedReader br, BufferedWriter bw) {
-            this.so = s;
-            this.br = br;
-            this.bw = bw;
-        }
-
-        public void run() {
-
-        }
-
-    }
+//    class ControlClient extends Thread {
+//        final BufferedReader br;
+//        final BufferedWriter bw;
+//        final Socket so;
+//
+//        public ControlClient(Socket s, BufferedReader br, BufferedWriter bw) {
+//            this.so = s;
+//            this.br = br;
+//            this.bw = bw;
+//        }
+//
+//        public void run() {
+//
+//        }
+//
+//    }

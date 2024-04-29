@@ -6,6 +6,8 @@ import java.util.List;
 
 public class Board {
     private final int[][] board;
+
+    // Values for each board index color
     public static final int NONE = 0;
     public static final int BLACK = 1;
     public static final int WHITE = 2;
@@ -22,6 +24,8 @@ public class Board {
         }
         return "-";
     }
+    // Converts color int to a byte for encoding purposes, will match
+    // with each char X, 0, or -.
     public static byte colorToByte(final int color) {
         // "O"
         if (color == WHITE) {
@@ -45,6 +49,7 @@ public class Board {
 //        return NONE;
 //    }
     // 8 by 8 board
+    // Collect all row and column moves.
     static private final int[] allRows = {1,2,3,4,5,6,7,8};
     static private final int[] allCols = {1,2,3,4,5,6,7,8};
     static private final List<OthelloServer.Move> allMoves = product();
@@ -66,12 +71,15 @@ public class Board {
         return isLegalMove(move.getRowIndex(), move.getColumnIndex(), c );
     }
     private boolean isLegalMove(int rowIndex, int columnIndex, int c) {
+        // Checks index bounds for legal moves based on where stones are.
         if ( rowIndex <= 0 || rowIndex > 8 || columnIndex <= 0 || columnIndex > 8 ) return false;
+        // If no stones, place chip
         if ( board[rowIndex][columnIndex] == NONE ) {
             return isEffectiveMove(rowIndex,columnIndex,c);
         }
         return false;
     }
+    // Similar to isLegalMove
     private boolean isEffectiveMove(int i, int j, int c) {
         return !(flippableIndices(i,j,c).isEmpty());
     }
@@ -103,6 +111,7 @@ public class Board {
         boolean flag = false;
         // original color
         final int oc = flipColor(c);
+        // Signal if move is available to made at indexes.
         while (true) {
             if (board[i][j] == oc) {
                 s.add( new OthelloServer.Move(i, j));
@@ -128,7 +137,7 @@ public class Board {
         }
         return false;
     }
-    // End of game conditions
+    // End of game conditions, when no more moves can be made.
     public boolean endOfGame() {
         return !isPlayable(WHITE) && !isPlayable(BLACK);
     }
@@ -153,7 +162,9 @@ public class Board {
     public List<OthelloServer.Move> legalMoves(final int c ) {
         List<OthelloServer.Move> r = new LinkedList<>();
         for ( OthelloServer.Move m : allMoves ) {
-            if (isLegalMove(m,c)) { r.add(m); }
+            if (isLegalMove(m,c)) {
+                r.add(m);
+            }
         }
         return r;
     }
@@ -184,6 +195,7 @@ public class Board {
         if(moves.isEmpty()) {
             throw new IllegalMoveException(mv);
         }
+        // Set each index to a color state
         for (OthelloServer.Move m : moves) {
                 board[m.getRowIndex()][m.getColumnIndex()] = c;
         }
@@ -229,21 +241,21 @@ public class Board {
             }
             sb.append(nl);
         }
+        // Print number of black and white stones.
         sb.append("Black: ").append(stoneCounts(BLACK)).append(nl);
         sb.append("White: ").append(stoneCounts(WHITE)).append(nl);
         return sb.toString();
     }
-    public String toString( int c ) {
+    public String toString(int c) {
         StringBuilder sb = new StringBuilder();
         String nl = System.getProperty("line.separator");
-
         sb.append(" |A B C D E F G H ").append(nl);
         sb.append("-+----------------").append(nl);
         for (int i = 1; i <= 8; i++) {
             sb.append(i).append("|");
             for (int j = 1; j <= 8; j++) {
-                if ( board[i][j] == NONE && isLegalMove( i, j, c ) ) {
-                    sb.append( ". " );
+                if (board[i][j] == NONE && isLegalMove(i, j, c)) {
+                    sb.append(". ");
                 }
                 else {
                     sb.append(color2String(board[i][j])).append(" ");
@@ -255,13 +267,14 @@ public class Board {
         sb.append("White: ").append(stoneCounts(WHITE)).append(nl);
         return sb.toString();
     }
+    // Detect if player quit
     public boolean getPlayerQuit() {
         return this.didPlayerQuit;
     }
     public void setPlayerQuit() {
         this.didPlayerQuit = true;
     }
-    // Write bytes to output
+    // Write board index bytes to output
     public void writeTo(OutputStream os) throws IOException {
         for (int i = 1; i <= 8; i++) {
             for (int j = 1; j <= 8; j++) {

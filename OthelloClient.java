@@ -22,7 +22,7 @@ public class OthelloClient {
     public void printCount() {
         System.out.println("Wins: " + this.wins + "- Draws: " + this.draws + "- Losses: " + this.losses);
     }
-
+    // Sets each equal to 0 at start
     public OthelloClient() {
         this.wins = 0;
         this.draws = 0;
@@ -53,6 +53,7 @@ public class OthelloClient {
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Connection failed.");
+            // Close player socket after execution
         } try {
             if (p != null) {
                 p.close();
@@ -61,13 +62,13 @@ public class OthelloClient {
             e.printStackTrace();
         }
     }
-    public static void startTwo(String host, int port) {
-        // Second client is made
-        Player p;
-        try {
-            p = new Player(host, port);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public static void startTwo(String host, int port) {
+//        // Second client is made
+//        Player p;
+//        try {
+//            p = new Player(host, port);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
